@@ -12,7 +12,6 @@ import (
 )
 
 func Algalon(config models.Bot) {
-
 	fmt.Println("Started " + config.Name)
 
 	bot, err := tgbotapi.NewBotAPI(config.Key)
@@ -31,10 +30,9 @@ func Algalon(config models.Bot) {
 
 		// REMOVE IF AUTHENTICATION IS NOT NEEDED
 		if _, authorized := AuthorizedUsers[update.Message.From.ID]; !authorized {
-			logger.Log(
-				config.ShortName,
-				"Unauthorized access attempt by "+update.Message.From.UserName,
-				update.Message.Text)
+			warning := "Unauthorized access attempt by " + update.Message.From.UserName
+			logger.Log(config.ShortName, warning, update.Message.Text)
+			sendMessage(bot, MainUser, warning)
 			continue
 		}
 
@@ -49,11 +47,14 @@ func Algalon(config models.Bot) {
 				logger.Log(config.ShortName, config.Name, response)
 			}
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, response)
-			msg.ParseMode = tgbotapi.ModeMarkdown
-
-			_, err := bot.Send(msg)
-			errorHandler.Handle(err)
+			sendMessage(bot, update.Message.Chat.ID, response)
 		}
 	}
+}
+
+func sendMessage(bot *tgbotapi.BotAPI, chatID int64, messageText string) {
+	msg := tgbotapi.NewMessage(chatID, messageText)
+	msg.ParseMode = tgbotapi.ModeMarkdown
+	_, err := bot.Send(msg)
+	errorHandler.Handle(err)
 }
