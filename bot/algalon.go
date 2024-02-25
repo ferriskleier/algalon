@@ -29,6 +29,7 @@ func Algalon(config models.Bot) {
 			continue
 		}
 
+		// REMOVE IF AUTHENTICATION IS NOT NEEDED
 		if _, authorized := AuthorizedUsers[update.Message.From.ID]; !authorized {
 			logger.Log(
 				config.ShortName,
