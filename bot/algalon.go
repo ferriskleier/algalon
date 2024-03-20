@@ -30,8 +30,9 @@ func Algalon(config models.Bot) {
 
 		// REMOVE IF AUTHENTICATION IS NOT NEEDED
 		if _, authorized := AuthorizedUsers[update.Message.From.ID]; !authorized {
-			warning := "Unauthorized access attempt by " + update.Message.From.UserName
+			warning := "Unauthorized access attempt by " + update.Message.From.UserName + ", " + update.Message.From.FirstName + " " + update.Message.From.LastName + ", @ " + update.Message.From.UserName + " , Location: " + update.Message.From.LanguageCode + ". Administration was notified of this incident."
 			logger.Log(config.ShortName, warning, update.Message.Text)
+			sendMessage(bot, int64(update.Message.From.ID), warning)
 			sendMessage(bot, MainUser, warning)
 			continue
 		}
